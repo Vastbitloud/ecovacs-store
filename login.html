@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - Vastbitloud</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+
+    /* 🔥 Função: imagem de fundo */
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABgAAAAQACAIAAACoEwUVAACuzmNhQlgAAK7OanVvbmJkYm5saWJyYXIuLi4SUyY9f///8tLS09PT1BQkNUVVZXWFlaYWJjZGVmZ2hpanBxc3R1dnd4eXp7fH1+f4CAgYKEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAAAA... (BASE64 MUITO LONGO AQUI) ...") no-repeat center center/cover;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.55);
+    z-index: -1;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.08);
+    padding: 30px 20px;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    color: white;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  button {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #0066ff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  button:hover { background: #0050cc; }
+
+  a {
+    color: #66aaff;
+    font-size: 14px;
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+  }
+
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>Entrar</h2>
+  <input id="phone" type="tel" placeholder="Telefone">
+  <input id="pass" type="password" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+  <a href="register.html">Criar conta</a>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
