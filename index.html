@@ -8,9 +8,10 @@
 body{margin:0;padding:0;height:100%;font-family:Arial;background:#0b0f17;color:#fff;display:flex;align-items:center;justify-content:center}
 .card{background:#111722;padding:28px;width:100%;max-width:380px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.45)}
 input{width:100%;padding:12px;margin:10px 0;border-radius:6px;border:none;background:#1a2333;color:#fff}
-button{width:100%;padding:12px;border-radius:6px;border:none;background:#4da3ff;color:#000;font-weight:700;cursor:pointer}
+button{width:100%;padding:12px;border-radius:6px;border:none;background:#4da3ff;color:#000;font-weight:700;cursor:pointer;margin-top:8px}
 a{color:#66aaff;display:block;margin-top:10px;cursor:pointer}
 .hidden{display:none}
+select{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none;background:#1a2333;color:#fff}
 </style>
 </head>
 <body>
@@ -20,6 +21,12 @@ a{color:#66aaff;display:block;margin-top:10px;cursor:pointer}
   <h2>Entrar</h2>
   <input id="phoneLogin" type="tel" placeholder="Telefone">
   <input id="passLogin" type="password" placeholder="Senha">
+  
+  <select id="destinationSelect">
+    <option value="equipe">Minha Equipe</option>
+    <option value="vastbitloud">Vastbitloud</option>
+  </select>
+  
   <button id="btnLogin">Entrar</button>
   <a id="linkShowRegister">Criar conta</a>
 </div>
@@ -36,42 +43,32 @@ a{color:#66aaff;display:block;margin-top:10px;cursor:pointer}
 </div>
 
 <script>
-// Helpers
 function showMessage(msg, ok=false){
   const d=document.createElement('div');
   d.textContent=msg;
-  d.style.position='fixed';d.style.top='18px';d.style.left='50%';
-  d.style.transform='translateX(-50%)';d.style.padding='10px 14px';
-  d.style.background= ok? '#4CAF50' : '#ff4d4d';
-  d.style.color='#fff';d.style.borderRadius='8px';d.style.zIndex=9999;
+  Object.assign(d.style,{position:'fixed',top:'18px',left:'50%',transform:'translateX(-50%)',padding:'10px 14px',background:ok?'#4CAF50':'#ff4d4d',color:'#fff',borderRadius:'8px',zIndex:9999});
   document.body.appendChild(d);
   setTimeout(()=>d.remove(),2200);
 }
 
-// DOM refs
 const loginBox=document.getElementById('loginBox');
 const registerBox=document.getElementById('registerBox');
-const linkShowRegister=document.getElementById('linkShowRegister');
-const linkShowLogin=document.getElementById('linkShowLogin');
-linkShowRegister.addEventListener('click', ()=>{ loginBox.classList.add('hidden'); registerBox.classList.remove('hidden'); });
-linkShowLogin.addEventListener('click', ()=>{ registerBox.classList.add('hidden'); loginBox.classList.remove('hidden'); });
+document.getElementById('linkShowRegister').addEventListener('click', ()=>{ loginBox.classList.add('hidden'); registerBox.classList.remove('hidden'); });
+document.getElementById('linkShowLogin').addEventListener('click', ()=>{ registerBox.classList.add('hidden'); loginBox.classList.remove('hidden'); });
 
-// preencher código se vier na URL
 const params=new URLSearchParams(window.location.search);
 const codigoConvite=params.get('codigo');
-if(codigoConvite){
-  document.getElementById('inviteCodeReg').value = codigoConvite;
-}
+if(codigoConvite) document.getElementById('inviteCodeReg').value = codigoConvite;
 
 // Cadastro
 document.getElementById('btnRegister').addEventListener('click', ()=>{
   const user=document.getElementById('userReg').value.trim();
   const phone=document.getElementById('phoneReg').value.trim();
   const pass=document.getElementById('passReg').value.trim();
-  const invitedBy=document.getElementById('inviteCodeReg').value.trim() || null;
+  const invitedBy=document.getElementById('inviteCodeReg').value.trim()||null;
   if(!user||!phone||!pass){ showMessage('Preencha todos os campos!'); return; }
   const myCode = "VAST-"+Date.now().toString(36).toUpperCase();
-  const data={ user, phone, pass, myCode, invitedBy };
+  const data={user,phone,pass,myCode,invitedBy};
   localStorage.setItem('vast_userdata', JSON.stringify(data));
   showMessage('Conta criada com sucesso!', true);
   setTimeout(()=>{ registerBox.classList.add('hidden'); loginBox.classList.remove('hidden'); },1200);
@@ -85,7 +82,17 @@ document.getElementById('btnLogin').addEventListener('click', ()=>{
   if(data && phone===data.phone && pass===data.pass){
     localStorage.setItem('vast_logged','1');
     showMessage('Login realizado!', true);
-    setTimeout(()=>{ window.location.href='equipe.html'; },700);
+
+    // escolha de destino
+    const dest = document.getElementById('destinationSelect').value;
+    setTimeout(()=>{
+      if(dest === 'vastbitloud'){
+        window.location.href = 'https://sites.google.com/view/vastbitloud';
+      } else {
+        window.location.href = 'equipe.html';
+      }
+    },700);
+
   } else showMessage('Telefone ou senha incorretos!');
 });
 </script>
