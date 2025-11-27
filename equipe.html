@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Minha Equipe</title>
 <style>
-body{margin:0;font-family:Arial;background:#0b0f17;color:#fff}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b0f17;color:#fff}
 .header{background:linear-gradient(180deg,#0f1724,#0b0f17);padding:36px 18px;text-align:center;border-bottom-left-radius:20px;border-bottom-right-radius:20px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
-.container{padding:18px}
+.container{padding:18px;max-width:720px;margin:0 auto}
 .card{background:#111722;padding:16px;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,.3);margin-bottom:12px}
-input{width:100%;padding:10px;border-radius:8px;border:none;background:#1a2333;color:#fff}
+input{width:100%;padding:10px;border-radius:8px;border:none;background:#1a2333;color:#fff;box-sizing:border-box}
 button{width:100%;padding:12px;border-radius:8px;border:none;background:#4da3ff;color:#000;cursor:pointer}
 #msgCopiado{color:#00ff7f;text-align:center;opacity:0;transition:opacity .3s;margin-top:8px}
+label.small{color:#b3b3b3;font-size:12px}
 </style>
 </head>
 <body>
@@ -25,51 +26,72 @@ button{width:100%;padding:12px;border-radius:8px;border:none;background:#4da3ff;
 
   <div class="card">
     <h3 id="bonus" style="color:#4da3ff;margin:0">-</h3>
-    <div style="color:#b3b3b3">BÔNUS</div>
+    <div class="small" style="color:#b3b3b3">BÔNUS</div>
   </div>
 
   <div class="card">
     <h3 id="invest" style="color:#4da3ff;margin:0">-</h3>
-    <div style="color:#b3b3b3">INVESTIDO</div>
+    <div class="small" style="color:#b3b3b3">INVESTIDO</div>
   </div>
 
   <div class="card">
     <h3 id="ativosCampo" style="color:#4da3ff;margin:0">-</h3>
-    <div style="color:#b3b3b3">ATIVOS</div>
+    <div class="small" style="color:#b3b3b3">ATIVOS</div>
   </div>
 
   <div class="card">
     <h3 id="membroCampo" style="color:#4da3ff;margin:0">-</h3>
-    <div style="color:#b3b3b3">CONVIDADOS</div>
+    <div class="small" style="color:#b3b3b3">CONVIDADOS</div>
   </div>
 
   <div class="card">
     <h3 style="margin:0 0 8px">Seu Código de Convite</h3>
-    <input id="linkFinal" readonly>
+    <input id="linkFinal" readonly aria-readonly="true">
     <button id="btnCopiar">Copiar Código</button>
-    <div id="msgCopiado">Código copiado!</div>
+    <div id="msgCopiado" role="status">Código copiado!</div>
   </div>
 
 </div>
 
 <script>
-const userData = JSON.parse(localStorage.getItem('vast_userdata')||'null');
-if(!userData){ window.location.href='index.html'; throw ''; }
+// pega dados locais
+const userData = JSON.parse(localStorage.getItem('vast_userdata') || 'null');
+if(!userData){ window.location.href = 'index.html'; throw ''; }
 
-const codigo = userData.myCode;
+// codigo do usuário (local ou URL)
+const params = new URLSearchParams(window.location.search);
+const codigoURL = params.get('codigo');
+const codigo = codigoURL || userData.myCode;
 
-document.getElementById('linkFinal').value =
-  location.origin + location.pathname.replace(/index\.html$/,'').replace(/equipe\.html$/,'') +
-  '?codigo=' + codigo;
+// o link final deve ser o site Vastbitloud + ?codigo=...
+const finalLink = 'https://sites.google.com/view/vastbitloud' + '?codigo=' + encodeURIComponent(codigo);
+document.getElementById('linkFinal').value = finalLink;
 
+// copiar para área de transferência
 document.getElementById('btnCopiar').addEventListener('click', ()=>{
-  const campo=document.getElementById('linkFinal');
+  const campo = document.getElementById('linkFinal');
   campo.select();
-  document.execCommand('copy');
-  const msg=document.getElementById('msgCopiado');
-  msg.style.opacity=1;
-  setTimeout(()=>msg.style.opacity=0,1600);
+  try {
+    const ok = document.execCommand('copy');
+    const msg = document.getElementById('msgCopiado');
+    msg.style.opacity = 1;
+    setTimeout(()=> msg.style.opacity = 0, 1500);
+  } catch(e){
+    // fallback: criar textarea temporário
+    const ta = document.createElement('textarea');
+    ta.value = finalLink;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    const msg = document.getElementById('msgCopiado');
+    msg.style.opacity = 1;
+    setTimeout(()=> msg.style.opacity = 0, 1500);
+  }
 });
+
+// ----- exibição de dados reais NÃO implementada (apenas placeholder "-") -----
+// deixamos "-" até integração com banco de dados real (conforme solicitado)
 </script>
 </body>
 </html>
