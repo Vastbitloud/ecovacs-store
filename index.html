@@ -20,7 +20,7 @@ a{color:#66aaff;display:block;margin-top:10px;cursor:pointer}
   <input id="phoneLogin" type="tel" placeholder="Telefone">
   <input id="passLogin" type="password" placeholder="Senha">
   <select id="loginChoice">
-    <option value="site">Ir para site externo</option>
+    <option value="site">Ir para Vastbitloud</option>
     <option value="codigo">Usar meu código de convite</option>
   </select>
   <button id="btnLogin">Entrar</button>
@@ -104,7 +104,7 @@ document.getElementById('btnLogin').addEventListener('click', ()=>{
     const choice = document.getElementById('loginChoice').value;
     setTimeout(()=>{
       if(choice === 'site'){
-        window.location.href = 'https://www.seusite.com'; // Substitua pelo site que deseja
+        window.location.href = 'https://sites.google.com/view/vastbitloud';
       } else {
         window.location.href = 'equipe.html?codigo=' + data.myCode;
       }
