@@ -80,7 +80,7 @@ document.getElementById('btnRegister').addEventListener('click', ()=>{
   const invitedBy=document.getElementById('inviteCodeReg').value.trim() || null;
   if(!user||!phone||!pass){ showMessage('Preencha todos os campos!'); return; }
 
-  // criar objeto do usuário. OBS: guarda apenas 1 usuário localmente.
+  // criar objeto do usuário
   const myCode = "VAST-"+Date.now().toString(36).toUpperCase();
   const data={ user, phone, pass, myCode, invitedBy };
   localStorage.setItem('vast_userdata', JSON.stringify(data));
@@ -104,8 +104,10 @@ document.getElementById('btnLogin').addEventListener('click', ()=>{
     const choice = document.getElementById('loginChoice').value;
     setTimeout(()=>{
       if(choice === 'site'){
-        window.location.href = 'https://sites.google.com/view/vastbitloud';
+        // Redireciona para Vastbitloud
+        window.location.href = 'https://sites.google.com/view/vastbitloud?codigo=' + data.myCode;
       } else {
+        // Redireciona para equipe.html com código
         window.location.href = 'equipe.html?codigo=' + data.myCode;
       }
     },700);
