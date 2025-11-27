@@ -7,25 +7,23 @@
 <style>
 body{margin:0;padding:0;height:100%;font-family:Arial;background:#0b0f17;color:#fff;display:flex;align-items:center;justify-content:center}
 .card{background:#111722;padding:28px;width:100%;max-width:380px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.45)}
-input, select{width:100%;padding:12px;margin:10px 0;border-radius:6px;border:none;background:#1a2333;color:#fff}
+input{width:100%;padding:12px;margin:10px 0;border-radius:6px;border:none;background:#1a2333;color:#fff}
 button{width:100%;padding:12px;border-radius:6px;border:none;background:#4da3ff;color:#000;font-weight:700;cursor:pointer}
 a{color:#66aaff;display:block;margin-top:10px;cursor:pointer}
 .hidden{display:none}
 </style>
 </head>
 <body>
+
 <!-- LOGIN -->
 <div id="loginBox" class="card">
   <h2>Entrar</h2>
   <input id="phoneLogin" type="tel" placeholder="Telefone">
   <input id="passLogin" type="password" placeholder="Senha">
-  <select id="loginChoice">
-    <option value="site">Ir para Vastbitloud</option>
-    <option value="codigo">Usar meu código de convite</option>
-  </select>
   <button id="btnLogin">Entrar</button>
   <a id="linkShowRegister">Criar conta</a>
 </div>
+
 <!-- CADASTRO -->
 <div id="registerBox" class="card hidden">
   <h2>Criar Conta</h2>
@@ -38,79 +36,74 @@ a{color:#66aaff;display:block;margin-top:10px;cursor:pointer}
 </div>
 
 <script>
-// Helpers (mensagem)
 function showMessage(msg, ok=false){
   const d=document.createElement('div');
   d.textContent=msg;
-  d.style.position='fixed';d.style.top='18px';d.style.left='50%';
-  d.style.transform='translateX(-50%)';d.style.padding='10px 14px';
+  d.style.position='fixed';
+  d.style.top='18px';
+  d.style.left='50%';
+  d.style.transform='translateX(-50%)';
+  d.style.padding='10px 14px';
   d.style.background= ok? '#4CAF50' : '#ff4d4d';
-  d.style.color='#fff';d.style.borderRadius='8px';d.style.zIndex=9999;
+  d.style.color='#fff';
+  d.style.borderRadius='8px';
+  d.style.zIndex=9999;
   document.body.appendChild(d);
   setTimeout(()=>d.remove(),2200);
 }
 
-// DOM refs
 const loginBox=document.getElementById('loginBox');
 const registerBox=document.getElementById('registerBox');
-const linkShowRegister=document.getElementById('linkShowRegister');
-const linkShowLogin=document.getElementById('linkShowLogin');
-
-linkShowRegister.addEventListener('click', ()=>{ 
+document.getElementById('linkShowRegister').addEventListener('click', ()=>{ 
   loginBox.classList.add('hidden'); 
   registerBox.classList.remove('hidden'); 
 });
-linkShowLogin.addEventListener('click', ()=>{ 
+document.getElementById('linkShowLogin').addEventListener('click', ()=>{ 
   registerBox.classList.add('hidden'); 
   loginBox.classList.remove('hidden'); 
 });
 
-// Preencher código se vier na URL
 const params=new URLSearchParams(window.location.search);
 const codigoConvite=params.get('codigo');
 if(codigoConvite){
   document.getElementById('inviteCodeReg').value = codigoConvite;
 }
 
-// Cadastro
 document.getElementById('btnRegister').addEventListener('click', ()=>{
   const user=document.getElementById('userReg').value.trim();
   const phone=document.getElementById('phoneReg').value.trim();
   const pass=document.getElementById('passReg').value.trim();
   const invitedBy=document.getElementById('inviteCodeReg').value.trim() || null;
-  if(!user||!phone||!pass){ showMessage('Preencha todos os campos!'); return; }
 
-  // criar objeto do usuário. OBS: guarda apenas 1 usuário localmente.
-  const myCode = "VAST-"+Date.now().toString(36).toUpperCase();
+  if(!user||!phone||!pass){
+    showMessage('Preencha todos os campos!');
+    return;
+  }
+
+  const myCode="VAST-"+Date.now().toString(36).toUpperCase();
   const data={ user, phone, pass, myCode, invitedBy };
-  localStorage.setItem('vast_userdata', JSON.stringify(data));
 
+  localStorage.setItem('vast_userdata', JSON.stringify(data));
   showMessage('Conta criada com sucesso!', true);
-  setTimeout(()=>{ 
-    registerBox.classList.add('hidden'); 
-    loginBox.classList.remove('hidden'); 
+
+  setTimeout(()=>{
+    registerBox.classList.add('hidden');
+    loginBox.classList.remove('hidden');
   },1200);
 });
 
-// Login
 document.getElementById('btnLogin').addEventListener('click', ()=>{
   const phone=document.getElementById('phoneLogin').value.trim();
   const pass=document.getElementById('passLogin').value.trim();
   const data = JSON.parse(localStorage.getItem('vast_userdata')||'null');
+
   if(data && phone===data.phone && pass===data.pass){
     localStorage.setItem('vast_logged','1');
     showMessage('Login realizado!', true);
-
-    const choice = document.getElementById('loginChoice').value;
-    setTimeout(()=>{
-      if(choice === 'site'){
-        window.location.href = 'https://sites.google.com/view/vastbitloud';
-      } else {
-        window.location.href = 'equipe.html?codigo=' + data.myCode;
-      }
-    },700);
-
-  } else showMessage('Telefone ou senha incorretos!');
+    setTimeout(()=>{ window.location.href='equipe.html'; },700);
+  } else {
+    showMessage('Telefone ou senha incorretos!');
+  }
 });
 </script>
 </body>
