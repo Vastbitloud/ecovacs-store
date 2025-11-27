@@ -57,8 +57,8 @@ const params = new URLSearchParams(window.location.search);
 const codigoURL = params.get('codigo');
 const codigo = codigoURL || userData.myCode;
 
-// Preenche input com link Vastbitloud + código de convite
-document.getElementById('linkFinal').value = 'https://sites.google.com/view/vastbitloud?codigo=' + codigo;
+// Preenche input com o link de convite completo
+document.getElementById('linkFinal').value = location.origin + location.pathname.replace(/equipe\.html$/,'') + '?codigo=' + codigo;
 
 // Copiar código
 document.getElementById('btnCopiar').addEventListener('click', ()=>{
