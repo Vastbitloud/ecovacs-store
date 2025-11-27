@@ -3,98 +3,42 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Vastbitloud - Login</title>
+<title>Login</title>
 <style>
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b0f17;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh}
-.card{background:#111722;padding:24px;width:100%;max-width:420px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.45)}
-input{width:100%;padding:12px;border-radius:8px;border:none;background:#1a2333;color:#fff;margin-bottom:12px;box-sizing:border-box}
-button{width:100%;padding:12px;border-radius:8px;border:none;background:#4da3ff;color:#000;cursor:pointer;font-weight:700}
-a{display:block;text-align:center;color:#66aaff;margin-top:10px;text-decoration:none}
-small{color:#9aa3b2}
+body{margin:0;font-family:Arial;background:#0b0f17;color:#fff}
+.container{padding:20px;margin-top:40px}
+input{width:100%;padding:12px;border:none;border-radius:8px;background:#1a2333;color:#fff;margin-bottom:15px}
+button{width:100%;padding:14px;border:none;border-radius:8px;background:#4da3ff;color:#000;font-weight:bold;cursor:pointer}
 </style>
 </head>
 <body>
-<div class="card" role="main" aria-live="polite">
-  <h2 style="margin:0 0 8px">Entrar</h2>
-  <input id="phone" type="tel" inputmode="tel" placeholder="Telefone (apenas números)">
-  <input id="password" type="password" placeholder="Senha (qualquer coisa para protótipo)">
-  <button id="btnLogin">Entrar</button>
-  <a id="linkShowRegister">Criar conta</a>
-  <div style="margin-top:8px"><small>Este é um protótipo: dados salvos localmente no navegador.</small></div>
-</div>
 
-<!-- Caixa de cadastro (inicialmente escondida) -->
-<div class="card" id="registerCard" style="display:none;position:fixed;left:50%;top:20%;transform:translateX(-50%);max-width:420px;">
-  <h2 style="margin:0 0 8px">Criar Conta</h2>
-  <input id="userReg" placeholder="Nome de usuário">
-  <input id="phoneReg" type="tel" inputmode="tel" placeholder="Telefone (apenas números)">
-  <input id="passReg" type="password" placeholder="Senha">
-  <input id="inviteCodeReg" placeholder="Código de convite (opcional)">
-  <button id="btnRegister">Cadastrar</button>
-  <a id="linkCloseRegister">Fechar</a>
+<div class="container">
+  <h2>Entrar</h2>
+
+  <input id="phone" placeholder="Digite seu número"/>
+
+  <button onclick="login()">Entrar</button>
 </div>
 
 <script>
-// mensagens simples
-function showMessage(msg, ok=false){
-  const el=document.createElement('div');
-  el.textContent=msg;
-  Object.assign(el.style,{position:'fixed',top:'16px',left:'50%',transform:'translateX(-50%)',padding:'10px 14px',background: ok? '#4CAF50':'#ff4d4d',color:'#fff',borderRadius:'8px',zIndex:9999,fontFamily:'Arial'});
-  document.body.appendChild(el);
-  setTimeout(()=>el.remove(),2000);
-}
+function login(){
+  const phone = document.getElementById("phone").value.trim();
 
-// alterna cadastro
-document.getElementById('linkShowRegister').addEventListener('click', ()=>{
-  document.querySelector('.card').style.display='none';
-  document.getElementById('registerCard').style.display='block';
-});
-document.getElementById('linkCloseRegister').addEventListener('click', ()=>{
-  document.getElementById('registerCard').style.display='none';
-  document.querySelector('.card').style.display='block';
-});
-
-// simples validação de telefone
-function normalizePhone(p){ return (p||'').replace(/\D/g,''); }
-function validPhone(p){ const n=normalizePhone(p); return n.length>=8; }
-
-// cadastrar (guarda no localStorage)
-document.getElementById('btnRegister').addEventListener('click', ()=>{
-  const user = (document.getElementById('userReg').value||'').trim();
-  const phone = (document.getElementById('phoneReg').value||'').trim();
-  const pass = (document.getElementById('passReg').value||'').trim();
-  const invitedBy = (document.getElementById('inviteCodeReg').value||'').trim()||null;
-
-  if(!user||!phone||!pass){ showMessage('Preencha todos os campos!'); return; }
-  if(!validPhone(phone)){ showMessage('Telefone inválido!'); return; }
-
-  const myCode = 'VAST-'+Date.now().toString(36).toUpperCase();
-  const data = { user, phone: normalizePhone(phone), pass, myCode, invitedBy };
-  localStorage.setItem('vast_userdata', JSON.stringify(data));
-  showMessage('Conta criada com sucesso!', true);
-
-  // volta para tela de login
-  setTimeout(()=>{ document.getElementById('registerCard').style.display='none'; document.querySelector('.card').style.display='block'; },900);
-});
-
-// login (verifica localStorage)
-document.getElementById('btnLogin').addEventListener('click', ()=>{
-  const phone = document.getElementById('phone').value.trim();
-  const pass  = document.getElementById('password').value.trim();
-  if(!phone||!pass){ showMessage('Preencha telefone e senha!'); return; }
-
-  const data = JSON.parse(localStorage.getItem('vast_userdata') || 'null');
-  if(!data){ showMessage('Conta não encontrada!'); return; }
-
-  if(normalizePhone(phone) === data.phone && pass === data.pass){
-    localStorage.setItem('vast_logged','1');
-    showMessage('Login realizado!', true);
-    // redireciona para equipe
-    setTimeout(()=>{ window.location.href = 'equipe.html'; },700);
-  } else {
-    showMessage('Telefone ou senha incorretos!');
+  if(phone.length < 8){
+    alert("Número inválido");
+    return;
   }
-});
+
+  const userData = {
+      phone: phone,
+      myCode: phone.slice(-6)  // código gerado automático
+  };
+
+  localStorage.setItem("vast_userdata", JSON.stringify(userData));
+  window.location.href = "equipe.html";  
+}
 </script>
+
 </body>
 </html>
