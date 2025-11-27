@@ -2,86 +2,99 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Minha Equipe</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vastbitloud - Login</title>
 <style>
-body{margin:0;font-family:Arial;background:#0b0f17;color:#fff}
-.header{
-  background:linear-gradient(180deg,#0f1724,#0b0f17);
-  padding:36px 18px;text-align:center;
-  border-bottom-left-radius:20px;border-bottom-right-radius:20px;
-  box-shadow:0 6px 20px rgba(0,0,0,.4)
-}
-.container{padding:18px}
-.card{
-  background:#111722;padding:16px;
-  border-radius:12px;
-  box-shadow:0 3px 12px rgba(0,0,0,.3);
-  margin-bottom:12px
-}
-input{
-  width:100%;padding:10px;border-radius:8px;border:none;
-  background:#1a2333;color:#fff
-}
-button{
-  width:100%;padding:12px;border-radius:8px;border:none;
-  background:#4da3ff;color:#000;cursor:pointer
-}
-#msgCopiado{
-  color:#00ff7f;text-align:center;opacity:0;
-  transition:opacity .3s;margin-top:8px
-}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b0f17;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh}
+.card{background:#111722;padding:24px;width:100%;max-width:420px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.45)}
+input{width:100%;padding:12px;border-radius:8px;border:none;background:#1a2333;color:#fff;margin-bottom:12px;box-sizing:border-box}
+button{width:100%;padding:12px;border-radius:8px;border:none;background:#4da3ff;color:#000;cursor:pointer;font-weight:700}
+a{display:block;text-align:center;color:#66aaff;margin-top:10px;text-decoration:none}
+small{color:#9aa3b2}
 </style>
 </head>
-
 <body>
-
-<div class="header">
-  <h2>Minha Equipe</h2>
-  <p style="color:#b3b3b3;margin:6px 0 0">Acompanhe seu desempenho</p>
+<div class="card" role="main" aria-live="polite">
+  <h2 style="margin:0 0 8px">Entrar</h2>
+  <input id="phone" type="tel" inputmode="tel" placeholder="Telefone (apenas números)">
+  <input id="password" type="password" placeholder="Senha (qualquer coisa para protótipo)">
+  <button id="btnLogin">Entrar</button>
+  <a id="linkShowRegister">Criar conta</a>
+  <div style="margin-top:8px"><small>Este é um protótipo: dados salvos localmente no navegador.</small></div>
 </div>
 
-<div class="container">
-
-  <div class="card"><h3 style="color:#4da3ff;margin:0">-</h3><div style="color:#b3b3b3">BÔNUS</div></div>
-  <div class="card"><h3 style="color:#4da3ff;margin:0">-</h3><div style="color:#b3b3b3">INVESTIDO</div></div>
-  <div class="card"><h3 style="color:#4da3ff;margin:0">-</h3><div style="color:#b3b3b3">ATIVOS</div></div>
-  <div class="card"><h3 style="color:#4da3ff;margin:0">-</h3><div style="color:#b3b3b3">CONVIDADOS</div></div>
-
-  <div class="card">
-    <h3 style="margin:0 0 8px">Seu Código de Convite</h3>
-
-    <input id="linkFinal" readonly>
-
-    <button id="btnCopiar">Copiar Código</button>
-    <div id="msgCopiado">Código copiado!</div>
-  </div>
-
+<!-- Caixa de cadastro (inicialmente escondida) -->
+<div class="card" id="registerCard" style="display:none;position:fixed;left:50%;top:20%;transform:translateX(-50%);max-width:420px;">
+  <h2 style="margin:0 0 8px">Criar Conta</h2>
+  <input id="userReg" placeholder="Nome de usuário">
+  <input id="phoneReg" type="tel" inputmode="tel" placeholder="Telefone (apenas números)">
+  <input id="passReg" type="password" placeholder="Senha">
+  <input id="inviteCodeReg" placeholder="Código de convite (opcional)">
+  <button id="btnRegister">Cadastrar</button>
+  <a id="linkCloseRegister">Fechar</a>
 </div>
 
 <script>
-const userData = JSON.parse(localStorage.getItem('vast_userdata')||'null');
-if(!userData){
-  window.location.href='index.html';
-  throw '';
+// mensagens simples
+function showMessage(msg, ok=false){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  Object.assign(el.style,{position:'fixed',top:'16px',left:'50%',transform:'translateX(-50%)',padding:'10px 14px',background: ok? '#4CAF50':'#ff4d4d',color:'#fff',borderRadius:'8px',zIndex:9999,fontFamily:'Arial'});
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2000);
 }
 
-const codigo = userData.myCode;
+// alterna cadastro
+document.getElementById('linkShowRegister').addEventListener('click', ()=>{
+  document.querySelector('.card').style.display='none';
+  document.getElementById('registerCard').style.display='block';
+});
+document.getElementById('linkCloseRegister').addEventListener('click', ()=>{
+  document.getElementById('registerCard').style.display='none';
+  document.querySelector('.card').style.display='block';
+});
 
-// link atualizado exatamente como você pediu
-document.getElementById('linkFinal').value =
-  "https://vastbitloud.github.io/ecovacs-store/?codigo=" + codigo;
+// simples validação de telefone
+function normalizePhone(p){ return (p||'').replace(/\D/g,''); }
+function validPhone(p){ const n=normalizePhone(p); return n.length>=8; }
 
-document.getElementById('btnCopiar').addEventListener('click', ()=>{
-  const campo=document.getElementById('linkFinal');
-  campo.select();
-  document.execCommand('copy');
-  const msg=document.getElementById('msgCopiado');
-  msg.style.opacity=1;
-  setTimeout(()=>msg.style.opacity=0,1600);
+// cadastrar (guarda no localStorage)
+document.getElementById('btnRegister').addEventListener('click', ()=>{
+  const user = (document.getElementById('userReg').value||'').trim();
+  const phone = (document.getElementById('phoneReg').value||'').trim();
+  const pass = (document.getElementById('passReg').value||'').trim();
+  const invitedBy = (document.getElementById('inviteCodeReg').value||'').trim()||null;
+
+  if(!user||!phone||!pass){ showMessage('Preencha todos os campos!'); return; }
+  if(!validPhone(phone)){ showMessage('Telefone inválido!'); return; }
+
+  const myCode = 'VAST-'+Date.now().toString(36).toUpperCase();
+  const data = { user, phone: normalizePhone(phone), pass, myCode, invitedBy };
+  localStorage.setItem('vast_userdata', JSON.stringify(data));
+  showMessage('Conta criada com sucesso!', true);
+
+  // volta para tela de login
+  setTimeout(()=>{ document.getElementById('registerCard').style.display='none'; document.querySelector('.card').style.display='block'; },900);
+});
+
+// login (verifica localStorage)
+document.getElementById('btnLogin').addEventListener('click', ()=>{
+  const phone = document.getElementById('phone').value.trim();
+  const pass  = document.getElementById('password').value.trim();
+  if(!phone||!pass){ showMessage('Preencha telefone e senha!'); return; }
+
+  const data = JSON.parse(localStorage.getItem('vast_userdata') || 'null');
+  if(!data){ showMessage('Conta não encontrada!'); return; }
+
+  if(normalizePhone(phone) === data.phone && pass === data.pass){
+    localStorage.setItem('vast_logged','1');
+    showMessage('Login realizado!', true);
+    // redireciona para equipe
+    setTimeout(()=>{ window.location.href = 'equipe.html'; },700);
+  } else {
+    showMessage('Telefone ou senha incorretos!');
+  }
 });
 </script>
-
 </body>
 </html>
