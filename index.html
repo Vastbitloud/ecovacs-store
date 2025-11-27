@@ -3,133 +3,85 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Vastbitloud - Login / Cadastro</title>
+<title>Minha Equipe</title>
+
 <style>
-body{margin:0;padding:0;height:100%;font-family:Arial,Helvetica,sans-serif;background:#0b0f17;color:#fff;display:flex;align-items:center;justify-content:center}
-.card{background:#111722;padding:28px;width:100%;max-width:380px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.45)}
-input, select{width:100%;padding:12px;margin:10px 0;border-radius:6px;border:none;background:#1a2333;color:#fff;box-sizing:border-box}
-button{width:100%;padding:12px;border-radius:6px;border:none;background:#4da3ff;color:#000;font-weight:700;cursor:pointer}
-a{color:#66aaff;display:block;margin-top:10px;cursor:pointer;text-decoration:none}
-.hidden{display:none}
-small{color:#9aa3b2}
+body{margin:0;font-family:Arial;background:#0b0f17;color:#fff}
+.header{
+  background:linear-gradient(180deg,#0f1724,#0b0f17);
+  padding:36px 18px;text-align:center;
+  border-bottom-left-radius:20px;border-bottom-right-radius:20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.4)
+}
+.container{padding:18px}
+.card{
+  background:#111722;padding:16px;
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.3);
+  margin-bottom:12px
+}
+input{
+  width:100%;padding:10px;border-radius:8px;border:none;
+  background:#1a2333;color:#fff
+}
+button{
+  width:100%;padding:12px;border-radius:8px;border:none;
+  background:#4da3ff;color:#000;cursor:pointer
+}
+#msgCopiado{
+  color:#00ff7f;text-align:center;opacity:0;
+  transition:opacity .3s;margin-top:8px
+}
 </style>
 </head>
+
 <body>
-<!-- LOGIN -->
-<div id="loginBox" class="card" aria-live="polite">
-  <h2 style="margin:0 0 8px">Entrar</h2>
-  <input id="phoneLogin" type="tel" inputmode="tel" placeholder="Telefone (apenas números)">
-  <input id="passLogin" type="password" placeholder="Senha">
-  <select id="loginChoice" aria-label="Destino após login">
-    <option value="site">Ir para Vastbitloud</option>
-    <option value="codigo">Usar meu código de convite</option>
-  </select>
-  <button id="btnLogin" type="button">Entrar</button>
-  <a id="linkShowRegister">Criar conta</a>
-  <div style="margin-top:8px"><small>Use seu telefone e senha cadastrados.</small></div>
+
+<div class="header">
+  <h2>Minha Equipe</h2>
+  <p style="color:#b3b3b3;margin:6px 0 0">Acompanhe seu desempenho</p>
 </div>
 
-<!-- CADASTRO -->
-<div id="registerBox" class="card hidden" aria-live="polite">
-  <h2 style="margin:0 0 8px">Criar Conta</h2>
-  <input id="userReg" type="text" placeholder="Nome de Usuário">
-  <input id="phoneReg" type="tel" inputmode="tel" placeholder="Telefone (apenas números)">
-  <input id="passReg" type="password" placeholder="Senha">
-  <input id="inviteCodeReg" type="text" placeholder="Código de Convite (opcional)">
-  <button id="btnRegister" type="button">Cadastrar</button>
-  <a id="linkShowLogin">Já tenho conta</a>
+<div class="container">
+
+  <div class="card"><h3 style="color:#4da3ff;margin:0">-</h3><div style="color:#b3b3b3">BÔNUS</div></div>
+  <div class="card"><h3 style="color:#4da3ff;margin:0">-</h3><div style="color:#b3b3b3">INVESTIDO</div></div>
+  <div class="card"><h3 style="color:#4da3ff;margin:0">-</h3><div style="color:#b3b3b3">ATIVOS</div></div>
+  <div class="card"><h3 style="color:#4da3ff;margin:0">-</h3><div style="color:#b3b3b3">CONVIDADOS</div></div>
+
+  <div class="card">
+    <h3 style="margin:0 0 8px">Seu Código de Convite</h3>
+
+    <input id="linkFinal" readonly>
+
+    <button id="btnCopiar">Copiar Código</button>
+    <div id="msgCopiado">Código copiado!</div>
+  </div>
+
 </div>
 
 <script>
-// Mensagem temporária
-function showMessage(msg, ok=false){
-  const d=document.createElement('div');
-  d.textContent=msg;
-  d.setAttribute('role','status');
-  Object.assign(d.style,{
-    position:'fixed',top:'18px',left:'50%',transform:'translateX(-50%)',
-    padding:'10px 14px',background: ok? '#4CAF50' : '#ff4d4d',
-    color:'#fff',borderRadius:'8px',zIndex:9999,fontFamily:'Arial'
-  });
-  document.body.appendChild(d);
-  setTimeout(()=>d.remove(),2200);
+const userData = JSON.parse(localStorage.getItem('vast_userdata')||'null');
+if(!userData){
+  window.location.href='index.html';
+  throw '';
 }
 
-// DOM
-const loginBox = document.getElementById('loginBox');
-const registerBox = document.getElementById('registerBox');
-const linkShowRegister = document.getElementById('linkShowRegister');
-const linkShowLogin = document.getElementById('linkShowLogin');
+const codigo = userData.myCode;
 
-// alterna visual
-linkShowRegister.addEventListener('click', ()=>{ loginBox.classList.add('hidden'); registerBox.classList.remove('hidden'); });
-linkShowLogin.addEventListener('click', ()=>{ registerBox.classList.add('hidden'); loginBox.classList.remove('hidden'); });
+// link atualizado exatamente como você pediu
+document.getElementById('linkFinal').value =
+  "https://vastbitloud.github.io/ecovacs-store/?codigo=" + codigo;
 
-// preenche código se vier na URL
-const params = new URLSearchParams(window.location.search);
-const codigoConvite = params.get('codigo');
-if(codigoConvite){
-  document.getElementById('inviteCodeReg').value = codigoConvite;
-}
-
-// funcoes básicas de validação simples
-function validatePhone(phone){
-  const only = phone.replace(/\D/g,'');
-  return only.length >= 8; // ajuste mínimo, aceita celulares e fixos simples
-}
-
-// cadastro
-document.getElementById('btnRegister').addEventListener('click', ()=>{
-  const user = document.getElementById('userReg').value.trim();
-  const phone = document.getElementById('phoneReg').value.trim();
-  const pass = document.getElementById('passReg').value.trim();
-  const invitedBy = document.getElementById('inviteCodeReg').value.trim() || null;
-
-  if(!user || !phone || !pass){
-    showMessage('Preencha todos os campos!');
-    return;
-  }
-  if(!validatePhone(phone)){
-    showMessage('Telefone inválido!');
-    return;
-  }
-  // cria objeto do usuário e guarda localmente (prototipo)
-  const myCode = "VAST-"+Date.now().toString(36).toUpperCase();
-  const data = { user, phone: phone.replace(/\D/g,''), pass, myCode, invitedBy };
-  localStorage.setItem('vast_userdata', JSON.stringify(data));
-  showMessage('Conta criada com sucesso!', true);
-  setTimeout(()=>{ registerBox.classList.add('hidden'); loginBox.classList.remove('hidden'); }, 900);
-});
-
-// login
-document.getElementById('btnLogin').addEventListener('click', ()=>{
-  const phone = document.getElementById('phoneLogin').value.trim();
-  const pass = document.getElementById('passLogin').value.trim();
-  const data = JSON.parse(localStorage.getItem('vast_userdata') || 'null');
-
-  if(!phone || !pass){ showMessage('Preencha telefone e senha!'); return; }
-  if(!data){ showMessage('Conta não encontrada!'); return; }
-
-  const normalized = phone.replace(/\D/g,'');
-  if(normalized === (data.phone||'') && pass === data.pass){
-    localStorage.setItem('vast_logged','1');
-    showMessage('Login realizado!', true);
-
-    const choice = document.getElementById('loginChoice').value;
-    setTimeout(()=>{
-      if(choice === 'site'){
-        // abre Vastbitloud com código anexado (se existir)
-        const target = 'https://sites.google.com/view/vastbitloud' + '?codigo=' + encodeURIComponent(data.myCode);
-        window.location.href = target;
-      } else {
-        // redireciona para a página de equipe (local)
-        window.location.href = 'equipe.html?codigo=' + encodeURIComponent(data.myCode);
-      }
-    },700);
-  } else {
-    showMessage('Telefone ou senha incorretos!');
-  }
+document.getElementById('btnCopiar').addEventListener('click', ()=>{
+  const campo=document.getElementById('linkFinal');
+  campo.select();
+  document.execCommand('copy');
+  const msg=document.getElementById('msgCopiado');
+  msg.style.opacity=1;
+  setTimeout(()=>msg.style.opacity=0,1600);
 });
 </script>
+
 </body>
 </html>
